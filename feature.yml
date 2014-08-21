@@ -1,0 +1,24 @@
+---
+- name: feature flag demo
+  hosts: "{{hosts}}"
+  user: ubuntu
+  sudo: true
+  tasks:
+  - pip: name={{item}} state=latest
+    - Flask
+    - jinja2
+    - dnspython
+
+  - file: dest=/opt/feature
+          mode=0755 owner=ubuntu group=ubuntu state=directory
+  - copy: src={{item}} dest=/opt/feature/{{item}}
+          mode=0755 owner=ubuntu group=ubuntu
+    with_items:
+    - feature.py
+
+  - file: dest=/opt/feature/templates
+          mode=0755 owner=ubuntu group=ubuntustate=directory
+  - copy: src=templates/{{item}} dest=/opt/feature/templates/{{item}}
+          mode=0644 owner=ubuntu group=ubuntu
+    with_items:
+    - feature.j2
